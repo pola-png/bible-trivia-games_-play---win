@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account & Data Deletion - Bible Trivia Quiz: Play & Win</title>
+  <style>
+    :root {
+      --primary: #1D4ED8;
+      --navy: #0F172A;
+      --bg: #F8FAFC;
+      --card: #FFFFFF;
+      --text: #334155;
+      --heading: #0F172A;
+      --border: #E2E8F0;
+      --red: #DC2626;
+      --red-bg: #FEF2F2;
+      --green: #10B981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      padding: 24px 16px;
+    }
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      background: var(--card);
+      border-radius: 16px;
+      padding: 40px 32px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    }
+    header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--red-bg);
+      color: var(--red);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 28px; color: var(--heading); margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: #64748B; }
+    h2 { font-size: 20px; color: var(--heading); margin-top: 32px; margin-bottom: 12px; border-left: 4px solid var(--red); padding-left: 12px; }
+    p { margin-bottom: 14px; font-size: 15px; }
+    ul { margin: 12px 0 16px 24px; font-size: 15px; }
+    li { margin-bottom: 8px; }
+    .alert-card {
+      background: var(--red-bg);
+      border: 1px solid #FECACA;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 24px 0;
+    }
+    .alert-card h3 { color: var(--red); font-size: 16px; margin-bottom: 8px; }
+    .form-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 28px 0;
+    }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 6px; color: var(--heading); }
+    input[type="email"], input[type="text"], textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      background: #FFFFFF;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="email"]:focus, textarea:focus { border-color: var(--primary); }
+    button {
+      background: var(--red);
+      color: #FFFFFF;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #B91C1C; }
+    .success-msg {
+      display: none;
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      color: #065F46;
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      font-weight: 500;
+    }
+    footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      color: #64748B;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge">Google Play Account Deletion Requirement</span>
+      <h1>Account & Data Deletion Portal</h1>
+      <p class="subtitle">Application: <strong>Bible Trivia Quiz: Play & Win</strong> (com.bibletriviaquiz.playandwin)<br>
+      Developer: <strong>Ubyy Tech</strong></p>
+    </header>
+
+    <h2>1. Overview of Account Deletion</h2>
+    <p>In compliance with Google Play's User Data & Account Deletion policies, you have the right to request the permanent deletion of your account and all associated personal data from <strong>Bible Trivia Quiz: Play & Win</strong>.</p>
+
+    <h2>2. Methods to Delete Your Account</h2>
+    
+    <p><strong>Method A: Inside the App (Instant Deletion)</strong></p>
+    <ul>
+      <li>Open <strong>Bible Trivia Quiz: Play & Win</strong> on your device.</li>
+      <li>Go to the <strong>Settings</strong> screen (bottom navigation bar).</li>
+      <li>Scroll to the bottom and tap <strong>"Delete Account & Data"</strong>.</li>
+      <li>Confirm the deletion prompt. Your account and personal data will be erased immediately.</li>
+    </ul>
+
+    <p><strong>Method B: Web Request (If App is Uninstalled)</strong></p>
+    <p>If you have uninstalled the application or cannot access your device, submit your registered email below to request permanent deletion:</p>
+
+    <div class="form-card">
+      <form id="deletionForm" onsubmit="handleFormSubmit(event)">
+        <div class="form-group">
+          <label for="userEmail">Registered Email Address *</label>
+          <input type="email" id="userEmail" required placeholder="e.g. user@gmail.com">
+        </div>
+        <div class="form-group">
+          <label for="userReason">Reason for Deletion (Optional)</label>
+          <textarea id="userReason" rows="3" placeholder="Let us know why you wish to delete your account..."></textarea>
+        </div>
+        <button type="submit">Submit Account Deletion Request</button>
+      </form>
+      <div id="successMsg" class="success-msg">
+        ✓ Your deletion request has been registered. Our security team will permanently purge your account record, quiz history, and associated addresses within 24 to 48 hours. A confirmation email will be sent to your address.
+      </div>
+    </div>
+
+    <h2>3. What Data Is Permanently Deleted</h2>
+    <ul>
+      <li><strong>Firebase Authentication Record:</strong> Email, User ID (UID), login credentials.</li>
+      <li><strong>User Profile:</strong> Display name, profile photo reference, account creation timestamp.</li>
+      <li><strong>Point Balances & Wallet:</strong> Accumulated trivia points, daily streak badges, referral history.</li>
+      <li><strong>Quiz Performance History:</strong> 10-day non-repeat history, passed stages, correct/wrong counts.</li>
+      <li><strong>Physical Delivery Information:</strong> Saved postal addresses, recipient names, phone numbers.</li>
+    </ul>
+
+    <h2>4. Data Retention Exceptions</h2>
+    <p>Certain historical transaction receipts (e.g. dispatched physical merchandise courier delivery tracking numbers) may be retained for up to 90 days strictly for legal, fraud prevention, and accounting compliance purposes before automatic anonymization.</p>
+
+    <h2>5. Direct Contact</h2>
+    <p>For urgent manual account deletion requests or privacy inquiries, email us directly with the subject <em>"Account Deletion Request"</em>:</p>
+    <p><strong>Contact Email:</strong> <a href="mailto:ubyytech2023@gmail.com?subject=Account%20Deletion%20Request">ubyytech2023@gmail.com</a></p>
+
+    <footer>
+      &copy; 2026 Ubyy Tech &bull; Bible Trivia Quiz: Play & Win
+    </footer>
+  </div>
+
+  <script>
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      var email = document.getElementById('userEmail').value;
+      if (!email) return;
+      document.getElementById('deletionForm').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

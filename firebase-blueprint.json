@@ -1,0 +1,178 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with quiz stats, point balance, and account creation timestamp",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "currentPoints": { "type": "integer" },
+        "totalQuizzesCompleted": { "type": "integer" },
+        "totalQuizzesPassed": { "type": "integer" },
+        "totalCorrectAnswers": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "email", "displayName", "currentPoints", "totalQuizzesCompleted", "totalQuizzesPassed", "totalCorrectAnswers", "createdAt"]
+    },
+    "QuizSession": {
+      "title": "QuizSession",
+      "description": "A 30-question Bible quiz session",
+      "type": "object",
+      "properties": {
+        "sessionId": { "type": "string" },
+        "userId": { "type": "string" },
+        "category": { "type": "string" },
+        "totalQuestions": { "type": "integer" },
+        "correctAnswers": { "type": "integer" },
+        "timedOutAnswers": { "type": "integer" },
+        "isPassed": { "type": "boolean" },
+        "pointsAwarded": { "type": "integer" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["sessionId", "userId", "category", "totalQuestions", "correctAnswers", "timedOutAnswers", "isPassed", "pointsAwarded", "status", "createdAt"]
+    },
+    "PointTransaction": {
+      "title": "PointTransaction",
+      "description": "Audit record for points ledger (rewards, cash redemptions, and shop redemptions)",
+      "type": "object",
+      "properties": {
+        "transactionId": { "type": "string" },
+        "userId": { "type": "string" },
+        "type": { "type": "string" },
+        "amount": { "type": "integer" },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["transactionId", "userId", "type", "amount", "description", "createdAt"]
+    },
+    "CashRedemptionRequest": {
+      "title": "CashRedemptionRequest",
+      "description": "Request to convert points to cash (min 50,000 points = $50 USD, 60 days active)",
+      "type": "object",
+      "properties": {
+        "requestId": { "type": "string" },
+        "userId": { "type": "string" },
+        "pointsRedeemed": { "type": "integer" },
+        "usdAmount": { "type": "integer" },
+        "accountName": { "type": "string" },
+        "accountNumber": { "type": "string" },
+        "bankName": { "type": "string" },
+        "payoutMethod": { "type": "string" },
+        "status": { "type": "string" },
+        "paymentReference": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["requestId", "userId", "pointsRedeemed", "usdAmount", "accountName", "accountNumber", "bankName", "status", "createdAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Physical reward shop product",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "pointsPrice": { "type": "integer" },
+        "stockQuantity": { "type": "integer" },
+        "imageUrl": { "type": "string" },
+        "isPublished": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["productId", "name", "description", "category", "pointsPrice", "stockQuantity", "imageUrl", "isPublished", "createdAt"]
+    },
+    "DeliveryAddress": {
+      "title": "DeliveryAddress",
+      "description": "Shipping address for product redemption delivery",
+      "type": "object",
+      "properties": {
+        "addressId": { "type": "string" },
+        "userId": { "type": "string" },
+        "recipientName": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "state": { "type": "string" },
+        "city": { "type": "string" },
+        "streetAddress": { "type": "string" },
+        "landmark": { "type": "string" },
+        "instructions": { "type": "string" },
+        "isDefault": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["addressId", "userId", "recipientName", "phoneNumber", "state", "city", "streetAddress", "isDefault", "createdAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "A product redemption order with delivery tracking",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string" },
+        "userId": { "type": "string" },
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "productImageUrl": { "type": "string" },
+        "pointsSpent": { "type": "integer" },
+        "status": { "type": "string" },
+        "trackingReference": { "type": "string" },
+        "courierName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["orderId", "userId", "productId", "productName", "pointsSpent", "status", "createdAt"]
+    },
+    "Question": {
+      "title": "Question",
+      "description": "A Bible trivia question",
+      "type": "object",
+      "properties": {
+        "questionId": { "type": "string" },
+        "questionText": { "type": "string" },
+        "options": { "type": "array" },
+        "correctOptionIndex": { "type": "integer" },
+        "category": { "type": "string" },
+        "difficulty": { "type": "string" },
+        "bibleReference": { "type": "string" },
+        "explanation": { "type": "string" },
+        "isPublished": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["questionId", "questionText", "options", "correctOptionIndex", "category", "difficulty", "isPublished", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User account documents containing points balance, active account duration, and stats"
+    },
+    "/quizSessions/{sessionId}": {
+      "schema": "QuizSession",
+      "description": "Quiz session records with question counts, pass status, and points awarded"
+    },
+    "/pointTransactions/{transactionId}": {
+      "schema": "PointTransaction",
+      "description": "Immutable ledger entries for points earned, cash redemptions, and shop redemptions"
+    },
+    "/cashRedemptionRequests/{requestId}": {
+      "schema": "CashRedemptionRequest",
+      "description": "Cash conversion requests (minimum 50,000 points = $50 USD for users active 60+ days)"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Available physical products for point redemptions"
+    },
+    "/deliveryAddresses/{addressId}": {
+      "schema": "DeliveryAddress",
+      "description": "Saved delivery addresses for product orders"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Product redemption orders with delivery status"
+    },
+    "/questions/{questionId}": {
+      "schema": "Question",
+      "description": "Bible quiz trivia questions bank"
+    }
+  }
+}

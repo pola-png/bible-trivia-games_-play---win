@@ -1,0 +1,6 @@
+{
+  "name": "Bible Trivia Quiz: Play & Win",
+  "description": "Play Bible Trivia Quiz: Play & Win! Test your Bible knowledge, earn points, refer friends, and redeem real physical products or cash out rewards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,34 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:pivotX="54"
+        android:pivotY="54">
+        <!-- Open Bible Left Page -->
+        <path
+            android:fillColor="#F8FAFC"
+            android:pathData="M52,38 C42,37 34,40 28,42 C26.9,42.4 26,43.4 26,44.6 L26,71.4 C26,73 27.6,74.2 29.1,73.7 C35,71.8 43,69 52,70 Z" />
+        <!-- Open Bible Right Page -->
+        <path
+            android:fillColor="#F1F5F9"
+            android:pathData="M56,38 C66,37 74,40 80,42 C81.1,42.4 82,43.4 82,44.6 L82,71.4 C82,73 80.4,74.2 78.9,73.7 C73,71.8 65,69 56,70 Z" />
+        <!-- Bible Spine / Center Shadow -->
+        <path
+            android:fillColor="#CBD5E1"
+            android:pathData="M52,38 L56,38 L56,70 L52,70 Z" />
+        <!-- Golden Cross Emblazoned on Bible Center -->
+        <path
+            android:fillColor="#F59E0B"
+            android:pathData="M51,44 L57,44 L57,50 L63,50 L63,54 L57,54 L57,66 L51,66 L51,54 L45,54 L45,50 L51,50 Z" />
+        <!-- Radiant Star & Rays Above Bible -->
+        <path
+            android:fillColor="#FBBF24"
+            android:pathData="M54,26 L55.5,31 L60,31.5 L56.5,34.5 L57.8,39 L54,36 L50.2,39 L51.5,34.5 L48,31.5 L52.5,31 Z" />
+        <!-- Gold Ribbon Marker -->
+        <path
+            android:fillColor="#D97706"
+            android:pathData="M53,69 L55,69 L56,77 L54,75 L52,77 Z" />
+    </group>
+</vector>

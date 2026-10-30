@@ -1,0 +1,6 @@
+{
+  "summary":  "Implementation plan to increase the quiz countdown timer to 15 seconds and update the passing threshold from 25 to 20 correct answers out of 30 for earning 50 points and progressing to the next stage.",
+  "updatedAt":  "2026-10-22T10:18:31.386280083Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

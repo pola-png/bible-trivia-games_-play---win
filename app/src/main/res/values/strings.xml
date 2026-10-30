@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Bible Trivia Quiz: Play &amp; Win</string>
+    <!-- Google Play Games Services Project ID -->
+    <string name="game_services_project_id" translatable="false">353378124326</string>
+</resources>

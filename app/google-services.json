@@ -1,0 +1,76 @@
+{
+  "project_info": {
+    "project_number": "353378124326",
+    "project_id": "woven-art-402909",
+    "storage_bucket": "woven-art-402909.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:353378124326:android:8cc0098f94177b4c571ce7",
+        "android_client_info": {
+          "package_name": "com.aistudio.biblequiz.vkwypz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "353378124326-t8ott63ehdquk2ide9ra6e5dv02b595g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aistudio.biblequiz.vkwypz",
+            "certificate_hash": "997d47347b875e0f2326b019fbd4c14caefa185a"
+          }
+        },
+        {
+          "client_id": "353378124326-es6gq4b6e2bk3394ojsj09g20d87mu35.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH2cSKGOLh6-8gjlcT-ioBSJygje_DYsY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "353378124326-es6gq4b6e2bk3394ojsj09g20d87mu35.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:353378124326:android:9cb53ec75f70b5e6571ce7",
+        "android_client_info": {
+          "package_name": "com.bibletriviaquiz.playandwin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "353378124326-es6gq4b6e2bk3394ojsj09g20d87mu35.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH2cSKGOLh6-8gjlcT-ioBSJygje_DYsY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "353378124326-es6gq4b6e2bk3394ojsj09g20d87mu35.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

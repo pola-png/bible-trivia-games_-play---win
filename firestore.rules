@@ -1,0 +1,373 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- GLOBAL HELPERS ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        (request.auth.token.email != null && request.auth.token.email == 'ubyytech2023@gmail.com')
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- VALIDATION HELPERS ---
+    function isValidUserProfile(data) {
+      return data.userId is string && isValidId(data.userId) &&
+             (isAdmin() || data.userId == request.auth.uid) &&
+             data.email is string && data.email.size() > 0 && data.email.size() <= 200 &&
+             data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 100 &&
+             data.currentPoints is int && data.currentPoints >= 0 &&
+             data.totalQuizzesCompleted is int && data.totalQuizzesCompleted >= 0 &&
+             data.totalQuizzesPassed is int && data.totalQuizzesPassed >= 0 &&
+             data.totalCorrectAnswers is int && data.totalCorrectAnswers >= 0 &&
+             (!('referralCode' in data) || (data.referralCode is string && data.referralCode.size() <= 64)) &&
+             (!('referredByCode' in data) || data.referredByCode == null || (data.referredByCode is string && data.referredByCode.size() <= 64)) &&
+             (!('referredByUserId' in data) || data.referredByUserId == null || (data.referredByUserId is string && data.referredByUserId.size() <= 128)) &&
+             (!('totalReferrals' in data) || (data.totalReferrals is int && data.totalReferrals >= 0)) &&
+             (!('successfulReferrals' in data) || (data.successfulReferrals is int && data.successfulReferrals >= 0)) &&
+             (!('categoryCycleRound' in data) || (data.categoryCycleRound is int && data.categoryCycleRound >= 1)) &&
+             (!('completedCategoriesInCycle' in data) || data.completedCategoriesInCycle is list) &&
+             (!('updatedAt' in data) || data.updatedAt == null || data.updatedAt is timestamp);
+    }
+
+    function isValidQuizSession(data) {
+      return data.sessionId is string && isValidId(data.sessionId) &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.category is string && data.category.size() >= 1 && data.category.size() <= 100 &&
+             data.totalQuestions is int && data.totalQuestions == 30 &&
+             data.correctAnswers is int && data.correctAnswers >= 0 && data.correctAnswers <= 30 &&
+             data.timedOutAnswers is int && data.timedOutAnswers >= 0 && data.timedOutAnswers <= 30 &&
+             data.isPassed is bool &&
+             data.pointsAwarded is int && (data.pointsAwarded == 0 || data.pointsAwarded == 50) &&
+             data.status is string && (data.status == 'in_progress' || data.status == 'completed' || data.status == 'abandoned');
+    }
+
+    function isValidPointTransaction(data) {
+      return data.transactionId is string && isValidId(data.transactionId) &&
+             data.userId is string && isValidId(data.userId) &&
+             (isAdmin() || data.userId == request.auth.uid) &&
+             data.type is string && (data.type == 'quiz_reward' || data.type == 'product_redemption' || data.type == 'cash_redemption' || data.type == 'refund_restoration' || data.type == 'admin_adjustment' || data.type == 'referral_bonus') &&
+             data.amount is int &&
+             data.description is string && data.description.size() <= 300;
+    }
+
+    function isValidReferral(data) {
+      return data.referralId is string && isValidId(data.referralId) &&
+             data.referrerUserId is string && isValidId(data.referrerUserId) &&
+             data.refereeUserId is string && isValidId(data.refereeUserId) &&
+             data.targetPoints is int && data.targetPoints == 10000 &&
+             data.rewardPoints is int && data.rewardPoints == 100 &&
+             data.refereePoints is int && data.refereePoints >= 0 &&
+             data.status is string && (data.status == 'pending' || data.status == 'qualified' || data.status == 'credited') &&
+             (!('creditedAt' in data) || data.creditedAt == null || data.creditedAt is timestamp) &&
+             (!('updatedAt' in data) || data.updatedAt == null || data.updatedAt is timestamp);
+    }
+
+    function isValidCashRedemptionRequest(data) {
+      return data.requestId is string && isValidId(data.requestId) &&
+             data.userId is string && isValidId(data.userId) &&
+             (isAdmin() || data.userId == request.auth.uid) &&
+             data.pointsRedeemed is int && data.pointsRedeemed >= 50000 &&
+             data.usdAmount is int && data.usdAmount >= 50 &&
+             data.accountName is string && data.accountName.size() >= 2 && data.accountName.size() <= 100 &&
+             data.accountNumber is string && data.accountNumber.size() >= 5 && data.accountNumber.size() <= 40 &&
+             data.bankName is string && data.bankName.size() >= 2 && data.bankName.size() <= 100 &&
+             (!('payoutMethod' in data) || data.payoutMethod == null || (data.payoutMethod is string && data.payoutMethod.size() <= 50)) &&
+             data.status is string && (data.status == 'pending' || data.status == 'approved' || data.status == 'processed' || data.status == 'rejected') &&
+             (!('paymentReference' in data) || data.paymentReference == null || (data.paymentReference is string && data.paymentReference.size() <= 100)) &&
+             (!('adminNotes' in data) || data.adminNotes == null || (data.adminNotes is string && data.adminNotes.size() <= 500)) &&
+             (!('updatedAt' in data) || data.updatedAt == null || data.updatedAt is timestamp);
+    }
+
+    function isValidProduct(data) {
+      return data.productId is string && isValidId(data.productId) &&
+             data.name is string && data.name.size() >= 1 && data.name.size() <= 200 &&
+             data.description is string && data.description.size() <= 2000 &&
+             data.category is string && data.category.size() >= 1 && data.category.size() <= 100 &&
+             data.pointsPrice is int && data.pointsPrice >= 10000 &&
+             data.stockQuantity is int && data.stockQuantity >= 0 &&
+             data.imageUrl is string && data.imageUrl.size() <= 1000 &&
+             data.isPublished is bool;
+    }
+
+    function isValidDeliveryAddress(data) {
+      return data.addressId is string && isValidId(data.addressId) &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.recipientName is string && data.recipientName.size() >= 1 && data.recipientName.size() <= 100 &&
+             data.phoneNumber is string && data.phoneNumber.size() >= 7 && data.phoneNumber.size() <= 25 &&
+             data.state is string && data.state.size() >= 1 && data.state.size() <= 100 &&
+             data.city is string && data.city.size() >= 1 && data.city.size() <= 100 &&
+             data.streetAddress is string && data.streetAddress.size() >= 1 && data.streetAddress.size() <= 300 &&
+             (!('landmark' in data) || data.landmark == null || (data.landmark is string && data.landmark.size() <= 200)) &&
+             (!('instructions' in data) || data.instructions == null || (data.instructions is string && data.instructions.size() <= 500)) &&
+             data.isDefault is bool;
+    }
+
+    function isValidOrder(data) {
+      return data.orderId is string && isValidId(data.orderId) &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.productId is string && isValidId(data.productId) &&
+             data.productName is string && data.productName.size() >= 1 && data.productName.size() <= 200 &&
+             data.pointsSpent is int && data.pointsSpent >= 10000 &&
+             data.status is string && (data.status == 'pending' || data.status == 'confirmed' || data.status == 'processing' || data.status == 'dispatched' || data.status == 'delivered' || data.status == 'cancelled') &&
+             (!('trackingReference' in data) || data.trackingReference == null || (data.trackingReference is string && data.trackingReference.size() <= 100)) &&
+             (!('courierName' in data) || data.courierName == null || (data.courierName is string && data.courierName.size() <= 100));
+    }
+
+    function isValidQuestion(data) {
+      return data.questionId is string && isValidId(data.questionId) &&
+             data.questionText is string && data.questionText.size() >= 5 && data.questionText.size() <= 1000 &&
+             data.options is list && data.options.size() == 4 && (data.options[0] is string) &&
+             data.correctOptionIndex is int && data.correctOptionIndex >= 0 && data.correctOptionIndex <= 3 &&
+             data.category is string && data.category.size() >= 1 && data.category.size() <= 100 &&
+             data.difficulty is string && data.difficulty.size() >= 1 && data.difficulty.size() <= 50 &&
+             (!('bibleReference' in data) || data.bibleReference == null || (data.bibleReference is string && data.bibleReference.size() <= 150)) &&
+             (!('explanation' in data) || data.explanation == null || (data.explanation is string && data.explanation.size() <= 1000)) &&
+             data.isPublished is bool;
+    }
+
+    // --- COLLECTION RULES ---
+
+    // 1. Users Collection
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      
+      allow create: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       incoming().userId == userId &&
+                       incoming().createdAt is timestamp &&
+                       incoming().createdAt <= request.time &&
+                       isValidUserProfile(incoming());
+
+      allow update: if (isOwner(userId) || isAdmin()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       isValidUserProfile(incoming());
+
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+
+    // 2. Quiz Sessions Collection
+    match /quizSessions/{sessionId} {
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+
+      allow create: if isSignedIn() &&
+                       isValidId(sessionId) &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().createdAt is timestamp &&
+                       incoming().createdAt <= request.time &&
+                       isValidQuizSession(incoming());
+
+      allow update: if isSignedIn() &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       (existing().userId == request.auth.uid || isAdmin()) &&
+                       isValidQuizSession(incoming());
+
+      allow delete: if isAdmin();
+    }
+
+    // 3. Point Transactions Collection (Append-Only Ledger)
+    match /pointTransactions/{transactionId} {
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+
+      allow create: if isSignedIn() &&
+                       isValidId(transactionId) &&
+                       (incoming().userId == request.auth.uid || isAdmin()) &&
+                       incoming().createdAt is timestamp &&
+                       incoming().createdAt <= request.time &&
+                       isValidPointTransaction(incoming());
+
+      allow update: if false; // Immutable ledger
+      allow delete: if isAdmin();
+    }
+
+    // 4. Cash Redemption Requests Collection (50,000 points = $50 USD minimum, 60 days active)
+    match /cashRedemptionRequests/{requestId} {
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+
+      allow create: if isSignedIn() &&
+                       isValidId(requestId) &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().createdAt is timestamp &&
+                       incoming().createdAt <= request.time &&
+                       isValidCashRedemptionRequest(incoming());
+
+      allow update: if isAdmin() &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       isValidCashRedemptionRequest(incoming());
+
+      allow delete: if isAdmin();
+    }
+
+    // 5. Products Collection
+    match /products/{productId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn() && (resource.data.isPublished == true || isAdmin());
+
+      allow create: if isAdmin() &&
+                       isValidId(productId) &&
+                       incoming().createdAt is timestamp &&
+                       incoming().createdAt <= request.time &&
+                       isValidProduct(incoming());
+
+      allow update: if (isAdmin() || (isSignedIn() && incoming().diff(existing()).affectedKeys().hasOnly(['stockQuantity']))) &&
+                       incoming().createdAt == existing().createdAt &&
+                       isValidProduct(incoming());
+
+      allow delete: if isAdmin();
+    }
+
+    // 6. Delivery Addresses Collection
+    match /deliveryAddresses/{addressId} {
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+
+      allow create: if isSignedIn() &&
+                       isValidId(addressId) &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().createdAt is timestamp &&
+                       incoming().createdAt <= request.time &&
+                       isValidDeliveryAddress(incoming());
+
+      allow update: if isSignedIn() &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       (existing().userId == request.auth.uid || isAdmin()) &&
+                       isValidDeliveryAddress(incoming());
+
+      allow delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // 7. Orders Collection
+    match /orders/{orderId} {
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+
+      allow create: if isSignedIn() &&
+                       isValidId(orderId) &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().createdAt is timestamp &&
+                       incoming().createdAt <= request.time &&
+                       isValidOrder(incoming());
+
+      allow update: if isSignedIn() &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       (isAdmin() || (existing().userId == request.auth.uid && incoming().diff(existing()).affectedKeys().hasOnly(['status']))) &&
+                       isValidOrder(incoming());
+
+      allow delete: if isAdmin();
+    }
+
+    // 8. Questions Collection
+    match /questions/{questionId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn() && (resource.data.isPublished == true || isAdmin());
+
+      allow create: if isAdmin() &&
+                       isValidId(questionId) &&
+                       incoming().createdAt is timestamp &&
+                       incoming().createdAt <= request.time &&
+                       isValidQuestion(incoming());
+
+      allow update: if isAdmin() &&
+                       incoming().createdAt == existing().createdAt &&
+                       isValidQuestion(incoming());
+
+      allow delete: if isAdmin();
+    }
+
+    // 9. Admins Collection
+    match /admins/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // 10. Referral Codes Lookup Collection
+    match /referralCodes/{code} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() &&
+                       isValidId(code) &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().code == code &&
+                       incoming().createdAt is timestamp &&
+                       incoming().createdAt <= request.time;
+      allow update: if false; // immutable once registered
+      allow delete: if isAdmin();
+    }
+
+    // 11. Referrals Collection
+    match /referrals/{referralId} {
+      allow get: if isSignedIn() && (
+        resource.data.referrerUserId == request.auth.uid ||
+        resource.data.refereeUserId == request.auth.uid ||
+        isAdmin()
+      );
+      allow list: if isSignedIn() && (
+        resource.data.referrerUserId == request.auth.uid ||
+        resource.data.refereeUserId == request.auth.uid ||
+        isAdmin()
+      );
+
+      allow create: if isSignedIn() &&
+                       isValidId(referralId) &&
+                       incoming().refereeUserId == request.auth.uid &&
+                       incoming().referrerUserId != request.auth.uid &&
+                       incoming().createdAt is timestamp &&
+                       incoming().createdAt <= request.time &&
+                       isValidReferral(incoming());
+
+      allow update: if isSignedIn() &&
+                       incoming().createdAt == existing().createdAt &&
+                       (
+                         // Referee updating their points
+                         (existing().refereeUserId == request.auth.uid &&
+                          incoming().refereeUserId == existing().refereeUserId &&
+                          incoming().referrerUserId == existing().referrerUserId) ||
+                         // Referrer claiming reward when referee reached 10,000 points
+                         (existing().referrerUserId == request.auth.uid &&
+                          incoming().refereeUserId == existing().refereeUserId &&
+                          incoming().referrerUserId == existing().referrerUserId &&
+                          existing().refereePoints >= 10000 &&
+                          incoming().status == 'credited') ||
+                         isAdmin()
+                       ) &&
+                       isValidReferral(incoming());
+
+      allow delete: if isAdmin();
+    }
+  }
+}
